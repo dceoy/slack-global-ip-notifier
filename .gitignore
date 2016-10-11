@@ -1,0 +1,4 @@
+slack_env.sh
+log/*
+!.gitkeep
+crontab
