@@ -37,7 +37,8 @@ GLOBAL_IP="$(fetch_ip httpbin.org/ip || fetch_ip inet-ip.info || fetch_ip ifconf
   && exit 1
 
 set -u
-echo -e "[$(date)] ${GLOBAL_IP}"
+MESSAGE="[$(LANG=C date)]\tglobal ip :\t${GLOBAL_IP}"
+echo -e "${MESSAGE}"
 
 [[ ${NOTIFICATION} -eq 0 ]] \
   && [[ -f "${LATEST_GLOBAL_IP_TXT}" ]] \
@@ -45,4 +46,4 @@ echo -e "[$(date)] ${GLOBAL_IP}"
   && exit 0
 
 echo "${GLOBAL_IP}" > "${LATEST_GLOBAL_IP_TXT}"
-${NOTIFY_SH} "GLOBAL IP :\t${GLOBAL_IP}"
+${NOTIFY_SH} "${MESSAGE}"
