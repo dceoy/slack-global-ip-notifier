@@ -3,16 +3,24 @@
 set -e
 
 ROOT_DIR="$(dirname ${0})"
-LOG_DIR="${ROOT_DIR}/log"
-LATEST_GLOBAL_IP_TXT="${LOG_DIR}/latest_global_ip.txt"
-GLOBAL_IP_LOG="${LOG_DIR}/global_ip.log"
-NOTIFY_SH="${ROOT_DIR}/slack_notify.sh"
-NOTIFICATION=0
+LATEST_GLOBAL_IP_TXT="${ROOT_DIR}/latest_global_ip"
+FORCE=0
+QUIET=0
+source "${ROOT_DIR}/slack_env.sh" # => SLACK_CHANNEL, SLACK_WEBHOOK_URL, SLACK_USERNAME, SLACK_ICON_EMOJI
 
 function fetch_ip {
   ip="$(curl -s -S ${1} | grep -oe '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}')"
   [[ "${ip}" = '' ]] && return 1
   echo "${ip}"
+}
+
+function slack_notify {
+  curl -sSX POST --data-urlencode \
+    "payload={'channel': '${SLACK_CHANNEL}', \
+              'username': '${SLACK_USERNAME}', \
+              'text': '${*}', \
+              'icon_emoji': '${SLACK_ICON_EMOJI}'}" \
+    ${SLACK_WEBHOOK_URL} > /dev/null
 }
 
 while [[ -n "${1}" ]]; do
@@ -22,7 +30,11 @@ while [[ -n "${1}" ]]; do
       shift 1
       ;;
     '-f' | '--force' )
-      NOTIFICATION=1
+      FORCE=1
+      shift 1
+      ;;
+    '-q' | '--quiet' )
+      QUIET=1
       shift 1
       ;;
     * )
@@ -37,13 +49,13 @@ GLOBAL_IP="$(fetch_ip httpbin.org/ip || fetch_ip inet-ip.info || fetch_ip ifconf
   && exit 1
 
 set -u
-MESSAGE="[$(LANG=C date)]\tglobal ip :\t${GLOBAL_IP}"
-echo -e "${MESSAGE}"
+MESSAGE="[$(LANG=C date)]\tGLOBAL IP :\t${GLOBAL_IP}"
+[[ ${QUIET} -eq 0 ]] && echo -e "${MESSAGE}"
 
-[[ ${NOTIFICATION} -eq 0 ]] \
+[[ ${FORCE} -eq 0 ]] \
   && [[ -f "${LATEST_GLOBAL_IP_TXT}" ]] \
   && [[ "$(cat ${LATEST_GLOBAL_IP_TXT})" = ${GLOBAL_IP} ]] \
   && exit 0
 
 echo "${GLOBAL_IP}" > "${LATEST_GLOBAL_IP_TXT}"
-${NOTIFY_SH} "${MESSAGE}"
+slack_notify "${MESSAGE}"

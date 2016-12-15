@@ -23,12 +23,12 @@ Usage
 3.  Test notification.
 
     ```sh
-    $ ./run.sh --force
+    $ ./notify.sh --force
     ```
 
 4.  Set `crontab`.
 
     ```sh
-    $ echo "0 * * * * $(pwd)/run.sh >> $(pwd)/log/global_ip.log 2>&1" > crontab
+    $ echo "0 * * * * $(pwd)/notify.sh --quiet" > crontab
     $ crontab crontab
     ```
