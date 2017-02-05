@@ -49,7 +49,7 @@ GLOBAL_IP="$(fetch_ip httpbin.org/ip || fetch_ip inet-ip.info || fetch_ip ifconf
   && exit 1
 
 set -u
-MESSAGE="[$(LANG=C date)]\tGLOBAL IP :\t${GLOBAL_IP}"
+MESSAGE="GLOBAL IP :\t${GLOBAL_IP}"
 [[ ${QUIET} -eq 0 ]] && echo -e "${MESSAGE}"
 
 [[ ${FORCE} -eq 0 ]] \
