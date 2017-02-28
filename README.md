@@ -1,4 +1,4 @@
-slack_global_ip_notifier
+slack-global-ip-notifier
 ========================
 
 Slack notifier of global IP
@@ -9,8 +9,8 @@ Usage
 1.  Check out the repository.
 
     ```sh
-    $ git clone https://github.com/dceoy/slack_global_ip_notifier.git
-    $ cd slack_global_ip_notifier
+    $ git clone https://github.com/dceoy/slack-global-ip-notifier.git
+    $ cd slack-global-ip_notifier
     ```
 
 2.  Set `slack_env.sh`.
