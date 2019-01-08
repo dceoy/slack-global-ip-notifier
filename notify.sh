@@ -3,7 +3,7 @@
 set -e
 
 ROOT_DIR="$(dirname ${0})"
-LATEST_GLOBAL_IP_TXT="${ROOT_DIR}/latest_global_ip"
+LATEST_GLOBAL_IP_TXT="${ROOT_DIR}/.latest_global_ip.txt"
 FORCE=0
 QUIET=0
 source "${ROOT_DIR}/slack_env.sh" # => SLACK_CHANNEL, SLACK_WEBHOOK_URL, SLACK_USERNAME, SLACK_ICON_EMOJI
