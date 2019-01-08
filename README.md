@@ -10,7 +10,7 @@ Usage
 
     ```sh
     $ git clone https://github.com/dceoy/slack-global-ip-notifier.git
-    $ cd slack-global-ip_notifier
+    $ cd slack-global-ip-notifier
     ```
 
 2.  Set `slack_env.sh`.

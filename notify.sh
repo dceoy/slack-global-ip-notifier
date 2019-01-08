@@ -19,7 +19,8 @@ function slack_notify {
     "payload={'channel': '${SLACK_CHANNEL}', \
               'username': '${SLACK_USERNAME}', \
               'text': '${*}', \
-              'icon_emoji': '${SLACK_ICON_EMOJI}'}" \
+              'icon_emoji': '${SLACK_ICON_EMOJI}', \
+              'icon_url': '${SLACK_ICON_URL}'}" \
     ${SLACK_WEBHOOK_URL} > /dev/null
 }
 
