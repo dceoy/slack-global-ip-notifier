@@ -11,6 +11,12 @@
 
 set -ue
 
+if [[ ${#} -ge 1 ]]; then
+  for a in "${@}"; do
+    [[ "${a}" = '--debug' ]] && set -x && break
+  done
+fi
+
 SCRIPT_PATH=$(realpath "${0}")
 ROOT_DIR=$(dirname "${SCRIPT_PATH}")
 SLACK_ENV_SH="${ROOT_DIR}/slack_env.sh"
@@ -49,18 +55,10 @@ function slack_notify {
     "${SLACK_WEBHOOK_URL}" > /dev/null
 }
 
-if [[ -f "${SLACK_ENV_SH}" ]]; then
-  # shellcheck disable=SC1090
-  source "${SLACK_ENV_SH}"
-  # => SLACK_CHANNEL, SLACK_WEBHOOK_URL, SLACK_USERNAME, SLACK_ICON_EMOJI
-else
-  abort "${SLACK_ENV_SH} not found"
-fi
-
 while [[ ${#} -ge 1 ]]; do
   case "${1}" in
-    '-d' | '--debug' )
-      set -x && shift 1
+    '--debug' )
+      shift 1
       ;;
     '-f' | '--force' )
       FORCE=1 && shift 1
@@ -72,10 +70,18 @@ while [[ ${#} -ge 1 ]]; do
       print_usage && exit 0
       ;;
     * )
-      echo 'invalid argument' && exit 1
+      abort 'invalid argument'
       ;;
   esac
 done
+
+if [[ -f "${SLACK_ENV_SH}" ]]; then
+  # shellcheck disable=SC1090
+  source "${SLACK_ENV_SH}"
+  # => SLACK_CHANNEL, SLACK_WEBHOOK_URL, SLACK_USERNAME, SLACK_ICON_EMOJI
+else
+  abort "${SLACK_ENV_SH} not found"
+fi
 
 GLOBAL_IP="$(fetch_ip httpbin.org/ip || fetch_ip inet-ip.info || fetch_ip ifconfig.me)"
 [[ -z "${GLOBAL_IP}" ]] && abort 'failed to fetch ip'
